@@ -1,0 +1,38 @@
+format_version: "11"
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+project_type: ios
+app:
+  envs:
+  - BITRISE_PROJECT_PATH: TuistApp.xcworkspace
+  - BITRISE_SCHEME: TuistApp
+  - BITRISE_DISTRIBUTION_METHOD: app-store
+workflows:
+  primary:
+    description: primary
+    steps:
+    - git-clone@6: {}
+    - cache-pull@2: {}
+    - git::https://github.com/mattrobmattrob/steps-xcode-archive@slowness:
+        inputs:
+        - project_path: $BITRISE_PROJECT_PATH
+        - scheme: $BITRISE_SCHEME
+        - distribution_method: $BITRISE_DISTRIBUTION_METHOD
+        - automatic_code_signing: "off"
+        - certificate_url_list: https://bitrise.io
+        - keychain_path: /Users/shamsahmed/Library/Keychains/login.keychain
+        - keychain_password: test
+        - upload_bitcode: "yes"
+        - compile_bitcode: "yes"
+        - export_development_team: 2TDUX39LX8
+        - log_formatter: xcpretty
+        - perform_clean_action: "no"
+        - xcodebuild_options: CI_BUILD=1
+        - xcconfig_content: COMPILER_INDEX_STORE_ENABLE = NO
+        - export_all_dsyms: "yes"
+        - verbose_log: "no"
+        - cache_level: swift_packages
+        - register_test_devices: "no"
+        - min_profile_validity: 0
+        - configuration: "AppStore"
+    - cache-push@2: {}
+    - deploy-to-bitrise-io@2: {}
